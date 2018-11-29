@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block scripts %}
+
+<!--Testing commits via the JetBrain's PyCharm-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type=text/javascript>
+  $(function() {
+    $('a#like').one('click', function() {
+
+      $.getJSON('/ulk', {
+        p: pid
+      }, function(data) {
+        $("#result2").text(data.result);
+      });
+      return false;
+
+    });
+  });
+</script>
+{% endblock %}
+
+{% block app_content %}
+
+    {% if current_user.is_authenticated %}
+    <p>Hello, {{ current_user.username }}!
+    {% if current_user.cnf %}
+
+        {% else %}
+        <b>You must confirm your account in order to activate it. Please check your inbox.</b>
+        {% endif %}
+    </p>
+    {% else %}
+    <p>Hello, user! You can
+    <a href="{{ url_for('login') }}">Login</a>
+        or
+    <a href="{{ url_for('register') }}">Register</a>
+    </p>
+    {% endif %}
+
+<br/>
+<h2>Blog posts:</h2>
+
+{% for p in posts %}
+
+ {% if p.upvotes %}
+{% set pupvotes = p.upvotes %}
+{% else %}
+{% set pupvotes = 0 %}
+{% endif %}
+
+ {% if p.upvotes == 1 %}
+ {% set likes = "Like" %}
+ {% else %}
+ {% set likes = "Likes" %}
+ {% endif %}
+
+ <p>
+         <a href="#" id=like>
+             <button style="width:100px" class="btn btn-outline-info" id="{{ p.id }}" onclick="pid={{ p.id }};pvts = {{ pupvotes }} +1;myF1();">{{ pupvotes }} {{ likes }}</button>
+         </a>
+     {{ p.author.username }} says: <b>{{ p.body }}</b>&nbsp;
+ </p>
+
+ <script type=text/javascript>
+ function myF1() {
+    $( "#" + pid ).text(pvts + ' Likes');
+ }
+</script>
+
+{% endfor %}
+
+{% endblock %}
